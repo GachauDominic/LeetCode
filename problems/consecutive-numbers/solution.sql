@@ -1,10 +1,11 @@
-SELECT DISTINCT l1.num AS ConsecutiveNums
-FROM Logs l1
-WHERE EXISTS (
-    SELECT 1
-    FROM Logs l2, Logs l3
-    WHERE l2.id = l1.id + 1
-      AND l3.id = l1.id + 2
-      AND l1.num = l2.num
-      AND l2.num = l3.num
-);
+WITH cte AS (
+    SELECT
+        id,
+        num,
+        id - ROW_NUMBER() OVER (PARTITION BY num ORDER BY id) AS grp
+    FROM Logs
+)
+SELECT DISTINCT num AS ConsecutiveNums
+FROM cte
+GROUP BY num, grp
+HAVING COUNT(*) >= 3;
