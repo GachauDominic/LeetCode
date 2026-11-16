@@ -1,9 +1,10 @@
--- Write your PostgreSQL query statement below
 SELECT DISTINCT l1.num AS ConsecutiveNums
 FROM Logs l1
-JOIN Logs l2
-    ON l1.id + 1 = l2.id
-JOIN Logs l3
-    ON l2.id + 1 = l3.id
-WHERE l1.num = l2.num
-  AND l2.num = l3.num;
+WHERE EXISTS (
+    SELECT 1
+    FROM Logs l2, Logs l3
+    WHERE l2.id = l1.id + 1
+      AND l3.id = l1.id + 2
+      AND l1.num = l2.num
+      AND l2.num = l3.num
+);
