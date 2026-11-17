@@ -1,8 +1,9 @@
 -- Write your PostgreSQL query statement below
-SELECT name AS Employee
+SELECT e.name AS Employee
 FROM Employee e
-WHERE salary > (
-    SELECT salary
+WHERE EXISTS (
+    SELECT 1
     FROM Employee m
     WHERE m.id = e.managerId
+      AND e.salary > m.salary
 );
